@@ -9,6 +9,8 @@
 <body>
     <h2>お菓子・飲み物 注文フォーム</h2>
 
+    <label>名前：</label>
+    <input type="text" id="name" placeholder="名前を入力してください"><br><br>
 
     <label>職員室：</label>
     <select id="room">
@@ -38,11 +40,11 @@
 
     <script>
         // ★ここにあなたのGAS WebアプリURLを入れてください
-        const GAS_URL = ' https://izusho-ec.github.io/order-form/';
+        const GAS_URL = ' https://script.google.com/a/macros/ict.shimanet.ed.jp/s/AKfycbwIZ-7mohDmYsKjdP1hGAkj_GewW_AEnsEESXvfvVyfqNd';
 
 
         // ★ここにLINE Developersで発行されたLIFF IDを入れてください
-        liff.init({ liffId: '★ここにLIFF ID★' })
+        liff.init({ liffId: '2007744971-7DNpnGb4' })
             .then(() => {
                 document.getElementById('orderBtn').addEventListener('click', () => {
                 const room = document.getElementById('room').value;
@@ -53,6 +55,10 @@
                 liff.getProfile().then(profile => {
                     const name = profile.displayName;
 
+                    if (!name) {
+                        alert('名前を入力してください。');
+                        return;
+                    }
 
                     const payload = {
                     name: name,
@@ -65,7 +71,7 @@
                     fetch(GAS_URL, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': '2007744971-7DNpnGb4'
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(payload)
                     })
