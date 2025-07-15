@@ -1,97 +1,96 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>職員室注文フォーム</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      padding: 20px;
-      background-color: #f9f9f9;
-    }
-    h1 {
-      color: #333;
-    }
-    label {
-      display: block;
-      margin-top: 10px;
-    }
-    input, select {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-    }
-    button {
-      margin-top: 20px;
-      padding: 10px;
-      width: 100%;
-      background-color: #28a745;
-      color: white;
-      border: none;
-      font-size: 16px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>職員室 注文フォーム</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 </head>
 <body>
-  <h1>職員室 おやつ・飲み物 注文フォーム</h1>
+    <h2>お菓子・飲み物 注文フォーム</h2>
 
-  <form id="orderForm">
-    <label for="name">お名前</label>
-    <input type="text" id="name" name="name" required />
 
-    <label for="room">職員室</label>
-    <select id="room" name="room">
-      <option value="職員室">職員室</option>
-      <option value="進路指導室">進路指導室</option>
-      <option value="生徒指導室">生徒指導室</option>
-      <option value="図書館">図書館</option>
-      <option value="商業センター">商業センター</option>
-      <option value="事務室">事務室</option>
-    </select>
+    <label>職員室：</label>
+    <select id="room">
+        <option value="職員室">職員室</option>
+        <option value="商業センター">商業センター</option>
+        <option value="進路指導室">進路指導室</option>
+        <option value="生徒指導室">生徒指導室</option>
+        <option value="事務室">事務室</option>
+    </select><br><br>
 
-    <label for="item">商品</label>
-    <select id="item" name="item">
-      <option value="コーヒー">コーヒー</option>
-      <option value="紅茶">紅茶</option>
-      <option value="クッキー">クッキー</option>
-      <option value="チョコレート">チョコレート</option>
-    </select>
 
-    <label for="quantity">個数</label>
-    <input type="number" id="quantity" name="quantity" min="1" required />
+    <label>商品：</label>
+    <select id="item">
+        <option value="コーヒー">コーヒー</option>
+        <option value="紅茶">紅茶</option>
+        <option value="クッキー">クッキー</option>
+        <option value="チョコ">チョコ</option>
+    </select><br><br>
 
-    <button type="submit">注文する</button>
-  </form>
 
-  <script>
-    document.getElementById("orderForm").addEventListener("submit", function (e) {
-      e.preventDefault();
+    <label>数量：</label>
+    <input type="number" id="quantity" value="1" min="1" max="10"><br><br>
 
-      const data = {
-        name: document.getElementById("name").value,
-        room: document.getElementById("room").value,
-        item: document.getElementById("item").value,
-        quantity: document.getElementById("quantity").value
-      };
 
-      fetch("https://script.google.com/a/macros/ict.shimanet.ed.jp/s/AKfycbwIZ-7mohDmYsKjdP1hGAkj_GewW_AEnsEESXvfvVyfqNd", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-      })
-        .then(response => response.text())
-        .then(result => {
-          alert("注文が完了しました！");
-          document.getElementById("orderForm").reset();
-        })
-        .catch(error => {
-          console.error("Error:", error);
-          alert("注文送信に失敗しました。");
-        });
-    });
-  </script>
+    <button id="orderBtn">注文する</button>
+
+
+    <script>
+        // ★ここにあなたのGAS WebアプリURLを入れてください
+        const GAS_URL = 'https://imaoka05.github.io/liff-order-app/';
+
+
+        // ★ここにLINE Developersで発行されたLIFF IDを入れてください
+        liff.init({ liffId: '★ここにLIFF ID★' })
+            .then(() => {
+                document.getElementById('orderBtn').addEventListener('click', () => {
+                const room = document.getElementById('room').value;
+                const item = document.getElementById('item').value;
+                const quantity = parseInt(document.getElementById('quantity').value);
+
+
+                liff.getProfile().then(profile => {
+                    const name = profile.displayName;
+
+
+                    const payload = {
+                    name: name,
+                    room: room,
+                    item: item,
+                    quantity: quantity
+                    };
+
+
+                    fetch(GAS_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': '2007744793-a5VbnQX2'
+                    },
+                    body: JSON.stringify(payload)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                    if (data.status === 'success') {
+                        alert('注文を受け付けました！');
+                        liff.closeWindow();
+                    } else {
+                        alert('注文に失敗しました。');
+                    }
+                    })
+                    .catch(error => {
+                    console.error(error);
+                    alert('通信エラーが発生しました。');
+                    });
+                });
+            });
+            })
+            .catch(err => {
+                console.error('LIFF初期化エラー:', err);
+            });
+    </script>
 </body>
 </html>
+
+
+
